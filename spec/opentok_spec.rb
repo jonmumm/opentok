@@ -21,6 +21,13 @@ describe OpenTok do
   end
   
   describe "Session creation" do
+    it "should be possible to genereate a valid session" do
+      opentok = OpenTok::OpenTokSDK.new @api_key, @api_secret
+      session = opentok.create_session @host
+
+      session_exists?(session.to_s).should be_true
+    end
+
     it "should be possible to generate a valid API token with a valid key and secret" do
       opentok = OpenTok::OpenTokSDK.new @api_key, @api_secret
       session = opentok.create_session @host
@@ -55,10 +62,31 @@ describe OpenTok do
       @valid_session = @opentok.create_session(@host).to_s
     end
     
-    it "should be possible to create a token" do
+    it "should be possible to create a valid token" do
       token = @opentok.generate_token :session_id => @valid_session.to_s
       
-      token.should match(/\A[0-9A-z=]+\Z/)
+      token_is_valid?(token).should be_true
+    end
+
+    it "should be possible to pass connection data in to a token" do
+      connection_data = "Foo bar"
+      token = @opentok.generate_token :session_id => @valid_session.to_s, :connection_data => connection_data
+
+      token_has_connection_data?(token, connection_data).should be_true
+    end
+
+    it "should be possible to set an expiration time on a token" do
+      time = Time.now.to_i + 6 * 24 * 60 * 60  
+      token = @opentok.generate_token :session_id => @valid_session.to_s, :expire_time => time
+
+      token_has_expiration_time?(token, time).should be_true
+    end
+
+    it "should be possible to set a role on time on a token" do
+      role = "moderator"
+      token = @opentok.generate_token :session_id => @valid_session.to_s, :role => role
+
+      token_has_role?(token, role).should be_true
     end
   end
 end

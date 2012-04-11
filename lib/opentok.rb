@@ -27,4 +27,5 @@ module OpenTok
   require 'open_tok/archive'
   require 'open_tok/archive_video_resource'
   require 'open_tok/archive_timeline_event'
+  require 'open_tok/test_helpers'
 end
